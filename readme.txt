@@ -1,1 +1,1 @@
-the courses' codes in syracuse university
+the courses' codes in syracuse university.
