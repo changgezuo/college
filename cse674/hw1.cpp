@@ -4,7 +4,8 @@
  
 using namespace std;
  
-// 基础冒泡排序
+//bubble sort
+//time complexityO(n^2),space compelxity O(1)
 vector<int> bubbleSort_1(vector<int> list){
 	vector<int> result;
 	if (list.empty()){
@@ -13,28 +14,15 @@ vector<int> bubbleSort_1(vector<int> list){
 
 	result = list;
 	int temp;
-	// 要遍历的次数
+	// the times that need to be arraneg
 	for (int i = 0; i < result.size() - 1; ++i){
-		cout << "第" << i + 1 << "趟排序:" << endl;;
-		// 从后向前依次的比较相邻两个数的大小
 		for (int j = 0; j < result.size() - 1; j++){
-			// 如果后面的元素小，则交换它们的位置
 			if (result[j + 1] < result[j]){
 				temp = result[j + 1];
 				result[j + 1] = result[j];
 				result[j] = temp;
 			}
-			cout << "排序中:";
-			for (int s = 0; s < result.size(); s++){
-				cout << result[s] << " ";
-			}
-			cout << endl;
 		}
-		cout << "排序结果:";
-		for (int s = 0; s < result.size(); s++){
-			cout << result[s] << " ";
-		}
-		cout << endl;
 	}
 
 	return result;
