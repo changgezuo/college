@@ -191,58 +191,54 @@ vector<int> HeadSort(vector<int> list){
     }
     return list;
 }
-
-// 归并排序的合并函数
-void Merge(vector<int> &input, int left, int mid, int right, vector<int> temp){
-    int i = left;				// i是第一段序列的下标
-    int j = mid + 1;			// j是第二段序列的下标
-    int k = 0;					// k是临时存放合并序列的下标
-
-    // 扫描第一段和第二段序列，直到有一个扫描结束
-    while (i <= mid && j <= right){
-        // 判断第一段和第二段取出的数哪个更小，将其存入合并序列，并继续向下扫描
-        if (input[i] <= input[j]){
-            temp[k++] = input[i++];
+void maxHeapify(int arr[],int start,int end){
+    int dad=start,son=dad*2+1;
+    while(son<=end){
+        if(son+1<=end&&arr[son]<arr[son+1])son++;
+        if(arr[dad]>arr[son]){
+            return;
         }
-        else{
-            temp[k++] = input[j++];
+        else {
+            swap(arr[dad],arr[son]);
+            dad=son;
+            son=dad*2+1;
         }
     }
-    // 若第一段序列还没扫描完，将其全部复制到合并序列
-    while (i <= mid){
-        temp[k++] = input[i++];
+}
+void heapsort(int arr[],int n){
+    for(int i=n/2-1;i>=0;--i){
+        maxHeapify(arr,i,n-1);
     }
-
-    // 若第二段序列还没扫描完，将其全部复制到合并序列
-    while (j <= right){
-        temp[k++] = input[j++];
-    }
-
-    k = 0;
-    // 将合并序列复制到原始序列中
-    while (left <= right){
-        input[left++] = temp[k++];
+    for(int i=n-1;i>-;--i){
+        swap(arr[0],arr[i]);
+        maxHeapify(arr,0,i-1);
     }
 }
-
-// 归并排序
-void MergeSort(vector<int> &input, int left, int right, vector<int> temp){
-    if (left < right){
-        int mid = (right + left) >> 1;
-        MergeSort(input, left, mid, temp);
-        MergeSort(input, mid + 1, right, temp);
-        Merge(input, left, mid, right, temp);
+void merge(int input[],int left,int mid,int right,int tmp[]){
+    int i=left,j=mid+1,k=left;
+    while(i<=mid&&j<=right){
+        if(input[i]<=input[j]){
+            tmp[k++]=input[i++];
+        }
+        else tmp[k++]=input[j++];
+    }
+    while(i<=mid){
+        tmp[k++]=input[i++];
+    }
+    while(j<=right)tmp[k++]=input[j++];
+    while(left<=right){input[left]=tmp[left];left++;}
+}
+void mergeSort(int input[],int left,int right,int tmp[] ){
+    if(left<right){
+        int mid=(left+right)/2;
+        mergeSort(input,left,mid,tmp);
+        mergeSort(input,mid+1,right,tmp);
+        merge(input,left,mid,right,tmp);
     }
 }
-
-// 归并排序
-void mergesort(vector<int> &input){
-    // 在排序前，先建好一个长度等于原数组长度的临时数组，避免递归中频繁开辟空间
-    vector<int> temp(input.size());
-    MergeSort(input, 0, input.size() - 1, temp);
-}
-void mergesort(int intput[], int n){
-    int
+void mergesort(int input[], int n){
+    int tmp[n];
+    mergeSort(input,0,n-1,tmp);
 }
 
 
@@ -277,7 +273,7 @@ void radixsort(int data[], int n){
 }
 int main(){
     int data[16]={3,44,5,22123,3213,2,7,45,63,323,565,78,80,534,23,5456};
-    QuickSort(data,0,15);
+    mergesort(data,16);
     for(int i=0;i<16;++i)printf("%d\n",data[i]);
 
 
