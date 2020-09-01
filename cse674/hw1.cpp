@@ -83,29 +83,7 @@ vector<int> ShellSort(vector<int> list){
     return result;
 }
 
-// 快速排序的division函数
-int division(vector<int> &list, int left, int right){
-    // 以最左边的数(left)为基准
-    int base = list[left];
-    while (left < right) {
-        // 从序列右端开始，向左遍历，直到找到小于base的数
-        while (left < right && list[right] >= base)
-            right--;
-        // 找到了比base小的元素，将这个元素放到最左边的位置
-        list[left] = list[right];
 
-        // 从序列左端开始，向右遍历，直到找到大于base的数
-        while (left < right && list[left] <= base)
-            left++;
-        // 找到了比base大的元素，将这个元素放到最右边的位置
-        list[right] = list[left];
-    }
-
-    // 最后将base放到left位置。此时，left位置的左侧数值应该都比left小；
-    // 而left位置的右侧数值应该都比left大。
-    list[left] = base;
-    return left;
-}
 int parition(int A[],int low,int high){
     int pivot=A[low];
     while(low<high){
@@ -124,73 +102,67 @@ void QuickSort(int A[], int low, int high){
         QuickSort(A,pivot+1,high);
     }
 }
-// 快速排序
-void QuickSort(vector<int> &list, int left, int right){
-    // 左下标一定小于右下标，否则就越界了
-    if (left < right) {
-        // 对数组进行分割，取出下次分割的基准标号
-        int base = division(list, left, right);
+const int BUCKET_NUM = 10;
 
-        // 对“基准标号“左侧的一组数值进行递归的切割，以至于将这些数值完整的排序
-        QuickSort(list, left, base - 1);
+struct ListNode{
+    explicit ListNode(int i=0):mData(i),mNext(NULL){}
+    ListNode* mNext;
+    int mData;
+};
 
-        // 对“基准标号“右侧的一组数值进行递归的切割，以至于将这些数值完整的排序
-        QuickSort(list, base + 1, right);
+ListNode* insert(ListNode* head,int val){
+    ListNode dummyNode;
+    ListNode *newNode = new ListNode(val);
+    ListNode *pre,*curr;
+    dummyNode.mNext = head;
+    pre = &dummyNode;
+    curr = head;
+    while(NULL!=curr && curr->mData<=val){
+        pre = curr;
+        curr = curr->mNext;
     }
+    newNode->mNext = curr;
+    pre->mNext = newNode;
+    return dummyNode.mNext;
 }
 
 
-// 堆排序的初始化函数
-void HeapAdjust(vector<int> &list, int parent, int length){
-    int temp = list[parent];					// temp保存当前父节点
-    int child = 2 * parent + 1;					// 先获得左孩子
-
-    while (child < length){
-        // 如果有右孩子结点，并且右孩子结点的值大于左孩子结点，则选取右孩子结点
-        if (child + 1 < length && list[child] < list[child + 1]){
-            child++;
+ListNode* Merge(ListNode *head1,ListNode *head2){
+    ListNode dummyNode;
+    ListNode *dummy = &dummyNode;
+    while(NULL!=head1 && NULL!=head2){
+        if(head1->mData <= head2->mData){
+            dummy->mNext = head1;
+            head1 = head1->mNext;
+        }else{
+            dummy->mNext = head2;
+            head2 = head2->mNext;
         }
-
-        // 如果有右孩子结点，并且右孩子结点的值大于左孩子结点，则选取右孩子结点
-        if (temp >= list[child]){
-            break;
-        }
-
-        // 把孩子结点的值赋给父结点
-        list[parent] = list[child];
-
-        // 选取孩子结点的左孩子结点,继续向下筛选
-        parent = child;
-        child = 2 * parent + 1;
+        dummy = dummy->mNext;
     }
-    list[parent] = temp;
+    if(NULL!=head1) dummy->mNext = head1;
+    if(NULL!=head2) dummy->mNext = head2;
+
+    return dummyNode.mNext;
 }
 
-// 堆排序
-vector<int> HeadSort(vector<int> list){
-    int length = list.size();
-    // 循环建立初始堆
-    for (int i = length / 2; i >= 0; i--){
-        HeapAdjust(list, i, length);
+void BucketSort(int n,int arr[]){
+    vector<ListNode*> buckets(BUCKET_NUM,(ListNode*)(0));
+    for(int i=0;i<n;++i){
+        int index = arr[i]/BUCKET_NUM;
+        ListNode *head = buckets.at(index);
+        buckets.at(index) = insert(head,arr[i]);
     }
-
-    // 进行n-1次循环，完成排序
-    for (int i = length - 1; i > 0; i--){
-        // 最后一个元素和第一元素进行交换
-        int temp = list[i];
-        list[i] = list[0];
-        list[0] = temp;
-
-        // 筛选 R[0] 结点，得到i-1个结点的堆
-        HeapAdjust(list, 0, i);
-        cout << "第" << length - i << "趟排序:";
-        for (int i = 0; i < list.size(); i++){
-            cout << list[i] << " ";
-        }
-        cout << endl;
+    ListNode *head = buckets.at(0);
+    for(int i=1;i<BUCKET_NUM;++i){
+        head = Merge(head,buckets.at(i));
     }
-    return list;
+    for(int i=0;i<n;++i){
+        arr[i] = head->mData;
+        head = head->mNext;
+    }
 }
+
 void maxHeapify(int arr[],int start,int end){
     int dad=start,son=dad*2+1;
     while(son<=end){
