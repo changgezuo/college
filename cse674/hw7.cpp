@@ -79,7 +79,7 @@ int completePackageWithImprovement(vector<int>&weight,vector<int>&cost,int cap){
     }
     cost=tmp;//we complete the first stage improvement of original weight and cost array
 
-    
+
     vector<vector<int>>dp(n+1,vector<int>(cap+1,0));
     for(int i=1;i<=n;++i){
         for(int j=1;j<=cap;++j){
