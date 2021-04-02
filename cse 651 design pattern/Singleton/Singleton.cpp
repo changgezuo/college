@@ -56,7 +56,10 @@ Singleton* Singleton::getInstance() {
 //put the object to the allocated memory //step3
 //however, some compiler may exchange the step2 and step3, return uninitialized object
 
-
+//therefore, we can use 'volatile' to fix it beacuse 'volatile' means the variance might be changed
+//by other things, can't be loaded into register
+//so , we can use 
+volatile static Singleton* m_instance;
 
 
 
