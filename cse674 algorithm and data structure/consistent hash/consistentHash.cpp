@@ -53,3 +53,19 @@ void ConsistenetHash::AddNewNode(const int index){
 	   serverNodes.insert(pair<uint32_t, size_t>(partition, i)); 
    }
 }
+
+int main(){
+	
+	ConsistenetHash ch(4, 1000);
+	ch.init();
+	for(int i =0; i < 10; ++i){
+		stringstream ss;
+		ss<<"test"<<i<<".txt";
+		size_t size = ch.GetServerIndex(ss.str());
+		cout<<ss.str()<<"===>";
+		cout<<size<<endl;	
+		
+	}
+	return 0;
+	
+}
